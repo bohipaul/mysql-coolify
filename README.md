@@ -23,7 +23,7 @@ Ce projet configure une base de données MySQL optimisée pour le déploiement s
    docker-compose up -d
    ```
 
-4. Accédez à phpMyAdmin sur http://localhost:8080
+4. Accédez à phpMyAdmin sur http://localhost:9090
 
 ## Déploiement sur Coolify
 
