@@ -78,9 +78,31 @@ Ce projet configure une base de données MySQL optimisée pour le déploiement s
 
 - `3306` : Port MySQL standard
 
+## Changement de mot de passe
+
+### Sur Coolify
+
+1. **Lors du premier déploiement** : Définissez `MYSQL_ROOT_PASSWORD` dans les variables d'environnement
+2. **Pour changer le mot de passe** :
+   - Connectez-vous au container MySQL via Coolify ou SSH
+   - Exécutez : `mysql -u root -p`
+   - Changez le mot de passe : `ALTER USER 'root'@'%' IDENTIFIED BY 'nouveau_mot_de_passe';`
+   - Rechargez : `FLUSH PRIVILEGES;`
+   - Mettez à jour la variable `MYSQL_ROOT_PASSWORD` dans Coolify
+   - Redémarrez le service phpMyAdmin
+
+### Avec le script automatique
+
+```bash
+./change-password.sh votre_nouveau_mot_de_passe
+```
+
 ## Sécurité
 
-⚠️ **Important** : Changez toujours les mots de passe par défaut en production !
+⚠️ **Important** : 
+- Changez toujours les mots de passe par défaut en production
+- Utilisez des mots de passe forts (minimum 12 caractères)
+- Ne commitez jamais les vrais mots de passe dans Git
 
 ## Sauvegarde
 
