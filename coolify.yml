@@ -1,0 +1,38 @@
+# Configuration Coolify pour MySQL
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  type: database
+  image: mysql:8.0
+  
+  # Variables d'environnement
+  environment:
+    - name: MYSQL_ROOT_PASSWORD
+      value: "${MYSQL_ROOT_PASSWORD}"
+    - name: MYSQL_DATABASE
+      value: "${MYSQL_DATABASE}"
+    - name: MYSQL_USER
+      value: "${MYSQL_USER}"
+    - name: MYSQL_PASSWORD
+      value: "${MYSQL_PASSWORD}"
+  
+  # Volumes persistants
+  volumes:
+    - name: mysql-data
+      mountPath: /var/lib/mysql
+      size: 10Gi
+  
+  # Ports
+  ports:
+    - containerPort: 3306
+      protocol: TCP
+  
+  # Sondes de santé
+  healthCheck:
+    enabled: true
+    path: /
+    port: 3306
+    intervalSeconds: 30
+    timeoutSeconds: 10

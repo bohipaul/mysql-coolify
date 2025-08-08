@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mysql:
+    build: .
+    container_name: mysql-coolify
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mydatabase}
+      MYSQL_USER: ${MYSQL_USER:-myuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-mypassword}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - mysql_network
+
+  # Service optionnel phpMyAdmin pour l'administration
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin-coolify
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      PMA_ABSOLUTE_URI: https://phpmyadmin.devci.net/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.devci.net`)"
+      - "traefik.http.routers.phpmyadmin.tls=true"
+      - "traefik.http.routers.phpmyadmin.tls.certresolver=letsencrypt"
+      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+    depends_on:
+      - mysql
+    networks:
+      - mysql_network
+
+volumes:
+  mysql_data:
+
+networks:
+  mysql_network:
+    driver: bridge

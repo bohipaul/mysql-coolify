@@ -1,0 +1,40 @@
+# Configuration Coolify pour phpMyAdmin
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+spec:
+  type: web
+  image: phpmyadmin/phpmyadmin:latest
+  
+  # Domaine personnalisé
+  domains:
+    - phpmyadmin.devci.net
+  
+  # Variables d'environnement
+  environment:
+    - name: PMA_HOST
+      value: mysql-service  # Référence au service MySQL
+    - name: PMA_PORT
+      value: "3306"
+    - name: MYSQL_ROOT_PASSWORD
+      value: "${MYSQL_ROOT_PASSWORD}"
+    - name: PMA_ABSOLUTE_URI
+      value: "https://phpmyadmin.devci.net/"
+  
+  # Ports
+  ports:
+    - containerPort: 80
+      protocol: TCP
+  
+  # Sondes de santé
+  healthCheck:
+    enabled: true
+    path: /
+    port: 80
+    intervalSeconds: 30
+    timeoutSeconds: 10
+  
+  # Dépendances
+  dependsOn:
+    - mysql-service
